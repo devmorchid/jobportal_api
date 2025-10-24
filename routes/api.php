@@ -11,16 +11,29 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/register/employer', [AuthController::class, 'registerEmployer']);
 
 // Get authenticated user
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['auth:sanctum', 'role:employer|admin'])
+    ->get('/test-role-check', function () {
+        return auth()->user()->getRoleNames();
+    });
+
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/jobs', [JobController::class, 'store']);
+    Route::put('/jobs/{id}', [JobController::class, 'update']);
+    Route::delete('/jobs/{id}', [JobController::class, 'destroy']);
 });
 
+
 // Jobs routes
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
+    // routes accessible for all authenticated users
     Route::get('/jobs', [JobController::class, 'index']);
     Route::get('/jobs/{id}', [JobController::class, 'show']);
 
-    Route::middleware('role:employer|admin')->group(function () {
+    // routes restricted to employer or admin
+    Route::middleware(['role:employer|admin'])->group(function () {
         Route::post('/jobs', [JobController::class, 'store']);
         Route::put('/jobs/{id}', [JobController::class, 'update']);
         Route::delete('/jobs/{id}', [JobController::class, 'destroy']);
@@ -28,24 +41,25 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-// Applications routes
-Route::middleware('auth:sanctum')->group(function () {
 
-    // user
-    Route::post('/jobs/{job_id}/apply', [ApplicationController::class, 'store']);
-    Route::get('/my-applications', [ApplicationController::class, 'myApplications']);
+// // Applications routes
+// Route::middleware('auth:sanctum')->group(function () {
 
-    // employer
-    Route::middleware('role:employer|admin')->group(function () {
-        Route::get('/employer/applications', [ApplicationController::class, 'employerApplications']);
-    });
+//     // user
+//     Route::post('/jobs/{job_id}/apply', [ApplicationController::class, 'store']);
+//     Route::get('/my-applications', [ApplicationController::class, 'myApplications']);
 
-    // admin
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/applications', [ApplicationController::class, 'index']);
-    });
-});
+//     // employer
+//     Route::middleware('role:employer|admin')->group(function () {
+//         Route::get('/employer/applications', [ApplicationController::class, 'employerApplications']);
+//     });
 
-Route::get('/jobs/search', [JobController::class, 'search']);
+//     // admin
+//     Route::middleware('role:admin')->group(function () {
+//         Route::get('/applications', [ApplicationController::class, 'index']);
+//     });
+// });
+
+// Route::get('/jobs/search', [JobController::class, 'search']);
 
 

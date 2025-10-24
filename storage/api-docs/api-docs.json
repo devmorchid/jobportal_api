@@ -292,13 +292,21 @@
                     "Jobs"
                 ],
                 "summary": "Liste des offres d'emploi",
-                "description": "Retourne toutes les offres d'emploi. Les utilisateurs normaux voient seulement certains champs.",
+                "description": "Retourne toutes les offres d'emploi. Authentification requise.",
                 "operationId": "9538d30d530d4c3680ea31fe228944e2",
                 "responses": {
                     "200": {
                         "description": "Succès"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -351,8 +359,16 @@
                     },
                     "403": {
                         "description": "Non autorisé"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/jobs/{id}": {
@@ -361,7 +377,7 @@
                     "Jobs"
                 ],
                 "summary": "Afficher une offre d'emploi",
-                "description": "Retourne les détails d'un job spécifique",
+                "description": "Retourne les détails d'un job spécifique. Authentification requise.",
                 "operationId": "6de31489b41fa51255446ac2ad15b7fb",
                 "parameters": [
                     {
@@ -379,8 +395,16 @@
                     },
                     "404": {
                         "description": "Job non trouvé"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "put": {
                 "tags": [
@@ -407,11 +431,11 @@
                                 "properties": {
                                     "title": {
                                         "type": "string",
-                                        "example": "Développeur Laravel"
+                                        "example": "Développeur Laravel Senior"
                                     },
                                     "description": {
                                         "type": "string",
-                                        "example": "Description modifiée"
+                                        "example": "Nouvelle description"
                                     },
                                     "location": {
                                         "type": "string",
@@ -419,7 +443,7 @@
                                     },
                                     "salary": {
                                         "type": "number",
-                                        "example": 6000
+                                        "example": 7000
                                     },
                                     "company": {
                                         "type": "string",
@@ -440,8 +464,16 @@
                     },
                     "404": {
                         "description": "Job non trouvé"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -469,8 +501,16 @@
                     },
                     "404": {
                         "description": "Job non trouvé"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/jobs/search": {
@@ -479,13 +519,12 @@
                     "Jobs"
                 ],
                 "summary": "Rechercher des offres d'emploi",
-                "description": "Recherche par title, location ou company",
+                "description": "Recherche par titre, lieu ou entreprise (publique).",
                 "operationId": "0c0290a245c580348856b16cf6be0b81",
                 "parameters": [
                     {
                         "name": "title",
                         "in": "query",
-                        "required": false,
                         "schema": {
                             "type": "string"
                         }
@@ -493,7 +532,6 @@
                     {
                         "name": "location",
                         "in": "query",
-                        "required": false,
                         "schema": {
                             "type": "string"
                         }
@@ -501,7 +539,6 @@
                     {
                         "name": "company",
                         "in": "query",
-                        "required": false,
                         "schema": {
                             "type": "string"
                         }
@@ -515,6 +552,15 @@
             }
         }
     },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "Token"
+            }
+        }
+    },
     "tags": [
         {
             "name": "Authentication",
@@ -524,14 +570,5 @@
             "name": "Jobs",
             "description": "Jobs"
         }
-    ],
-    "components": {
-        "securitySchemes": {
-            "sanctum": {
-                "type": "http",
-                "scheme": "bearer",
-                "bearerFormat": "Token"
-            }
-        }
-    }
+    ]
 }

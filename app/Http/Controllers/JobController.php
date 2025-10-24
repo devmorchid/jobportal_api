@@ -29,7 +29,7 @@ class JobController extends Controller
             return Job::where('user_id', $user->id)->get();
         }
 
-        return Job::select('id', 'title', 'description', 'location', 'salary', 'company')->get();
+        return Job::select('id', 'title', 'description', 'location', 'company')->get();
     }
 
     /**
@@ -45,7 +45,6 @@ class JobController extends Controller
      *             @OA\Property(property="title", type="string", example="Développeur Laravel"),
      *             @OA\Property(property="description", type="string", example="Description du job"),
      *             @OA\Property(property="location", type="string", example="Casablanca"),
-     *             @OA\Property(property="salary", type="number", example=5000),
      *             @OA\Property(property="company", type="string", example="TechCorp")
      *         )
      *     ),
@@ -64,7 +63,6 @@ class JobController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'location' => 'required|string',
-            'salary' => 'nullable|numeric',
             'company' => 'required|string|max:255',
         ]);
 
@@ -117,7 +115,6 @@ class JobController extends Controller
      *             @OA\Property(property="title", type="string", example="Développeur Laravel"),
      *             @OA\Property(property="description", type="string", example="Description modifiée"),
      *             @OA\Property(property="location", type="string", example="Rabat"),
-     *             @OA\Property(property="salary", type="number", example=6000),
      *             @OA\Property(property="company", type="string", example="TechCorp")
      *         )
      *     ),
@@ -130,6 +127,7 @@ class JobController extends Controller
     {
         $user = Auth::user();
         $job = Job::findOrFail($id);
+
         if ($user->id !== $job->user_id && !$user->hasRole('admin')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
@@ -138,7 +136,6 @@ class JobController extends Controller
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
             'location' => 'sometimes|string',
-            'salary' => 'nullable|numeric',
             'company' => 'sometimes|string|max:255',
         ]);
 
@@ -220,7 +217,7 @@ class JobController extends Controller
         }
 
         if ($request->has('company')) {
-            $query->where('description', 'like', '%'.$request->company.'%');
+            $query->where('company', 'like', '%'.$request->company.'%');
         }
 
         return $query->get();
